@@ -1,7 +1,7 @@
 #include <iostream>
 
 using namespace std;
-int main(int argc, char** argv) {
+int main() {
 	int arr[5], min, max;
 	
 	for(int i = 0; i < 5; i++) {
