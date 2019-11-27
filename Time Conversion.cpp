@@ -17,9 +17,9 @@ void clock(string str) {
 }
 
 int main() {
-	string ans = "12:05:45PM";
+	string ans;
+	cin >> ans;
 	
-	cout << ans << endl;
 	
 	clock(ans);
 }
