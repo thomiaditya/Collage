@@ -10,8 +10,8 @@
 #include <WiFiClientSecure.h>
 #include <TelegramBot.h>
 
-String pass = "hakimevi";
-String ssid_ = "Adit Hotspot";
+String pass;
+String ssid_;
 int ssid;
 
 const char BotToken[] = "882232600:AAFZJ1qLdzNPxp40Csc5YtGDYB4LrICVWE4";
@@ -112,22 +112,22 @@ void loop() {
 
   message tes = botTL.getUpdates();
 
-  if (tes.text.equals("/buzzer-on")) {
+  if (tes.text.equals("/buzzer_on")) {
     digitalWrite(D1, HIGH);
     botTL.sendMessage(tes.chat_id, "Buzzer On");
-  } else if (tes.text.equals("/buzzer-off")) {
+  } else if (tes.text.equals("/buzzer_off")) {
     digitalWrite(D1, LOW);
     botTL.sendMessage(tes.chat_id, "Buzzer Off");
   }
 
-  int sensorFlameAnalog = analogRead(A0);
+//  int sensorFlameAnalog = analogRead(A0);
+//
+//  if (sensorFlameAnalog < 70) {
+//    Serial.println("Danger, there's Fire around!");
+//    digitalWrite(D1, HIGH);
+//  } else {
+//    digitalWrite(D1, LOW);
+//  }
 
-  if (sensorFlameAnalog < 70) {
-    Serial.println("Danger, there's Fire around!");
-    digitalWrite(D1, HIGH);
-  } else {
-    digitalWrite(D1, LOW);
-  }
-
-  delay(1);
+  delay(1000);
 }
