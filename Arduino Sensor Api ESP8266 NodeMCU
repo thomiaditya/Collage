@@ -1,0 +1,133 @@
+
+/*
+   PENJELASAN PIN
+
+   D0 = Buzzer
+   A0 = Sensor Flame
+*/
+
+#include <ESP8266WiFi.h>
+#include <WiFiClientSecure.h>
+#include <TelegramBot.h>
+
+String pass = "hakimevi";
+String ssid_ = "Adit Hotspot";
+int ssid;
+
+const char BotToken[] = "882232600:AAFZJ1qLdzNPxp40Csc5YtGDYB4LrICVWE4";
+WiFiClientSecure net;
+TelegramBot botTL(BotToken, net);
+
+void searchWifi() {
+  bool finish = false;
+  while (!finish) {
+    Serial.println("Scan Start!");
+    int n = WiFi.scanNetworks();
+
+    Serial.println("scan done!");
+    if (n == 0) {
+      Serial.println("no networks found");
+    } else {
+      Serial.print(n);
+      Serial.println(" networks found");
+      for (int i = 0; i < n; ++i) {
+        Serial.print(i + 1);
+        Serial.print(": ");
+        Serial.print(WiFi.SSID(i));
+        Serial.print(" (");
+        Serial.print(WiFi.RSSI(i));
+        Serial.print(")");
+        Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+        delay(10);
+      }
+      finish = true;
+    }
+  }
+  Serial.println("");
+}
+
+
+//=========================================================== START ==================================================================== //
+
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial) {} //mulai pada saat serial dibuka
+  delay(1000);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  delay(100);
+
+  if (WiFi.status() != WL_CONNECTED && ssid_ == NULL && pass == NULL) {
+    searchWifi();
+    Serial.println("\n Masukkan ID : ");
+    while (Serial.available() == 0) {}
+    ssid = Serial.parseInt();
+    Serial.println(ssid);
+
+    Serial.println("\n Masukkan Pass : ");
+    for ( ; ; ) {
+      if (Serial.available()) {
+        pass = Serial.readStringUntil('\n');
+        Serial.println(pass);
+
+        if (pass != NULL) {
+          WiFi.begin(WiFi.SSID(ssid - 1), pass);
+          Serial.print("Connecting");
+          while (WiFi.status() != WL_CONNECTED) {
+            Serial.print(".");
+            delay(200);
+          }
+          Serial.println("");
+          Serial.println("WiFi connected");
+          Serial.println("IP address: ");
+          Serial.println(WiFi.localIP());
+
+          break;
+        }
+      }
+    }
+  } else {
+    WiFi.begin(ssid_, pass);
+    Serial.print("Connecting");
+    while (WiFi.status() != WL_CONNECTED) {
+      Serial.print(".");
+      delay(200);
+    }
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+
+  }
+
+  botTL.begin();
+  pinMode(D1, OUTPUT);
+  Serial.println("Setup selesai");
+
+}
+
+void loop() {
+
+  message tes = botTL.getUpdates();
+
+  if (tes.text.equals("/buzzer-on")) {
+    digitalWrite(D1, HIGH);
+    botTL.sendMessage(tes.chat_id, "Buzzer On");
+  } else if (tes.text.equals("/buzzer-off")) {
+    digitalWrite(D1, LOW);
+    botTL.sendMessage(tes.chat_id, "Buzzer Off");
+  }
+
+  int sensorFlameAnalog = analogRead(A0);
+
+  if (sensorFlameAnalog < 70) {
+    Serial.println("Danger, there's Fire around!");
+    digitalWrite(D1, HIGH);
+  } else {
+    digitalWrite(D1, LOW);
+  }
+
+  delay(1);
+}
