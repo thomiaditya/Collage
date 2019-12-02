@@ -21,15 +21,15 @@ TelegramBot botTL(BotToken, net);
 void searchWifi() {
   bool finish = false;
   while (!finish) {
-    Serial.println("Scan Start!");
+    Serial.println("Scan start!");
     int n = WiFi.scanNetworks();
 
-    Serial.println("scan done!");
+    Serial.println("Scan done!");
     if (n == 0) {
-      Serial.println("no networks found");
+      Serial.println("No networks found!");
     } else {
       Serial.print(n);
-      Serial.println(" networks found");
+      Serial.println("Networks found!");
       for (int i = 0; i < n; ++i) {
         Serial.print(i + 1);
         Serial.print(": ");
