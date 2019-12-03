@@ -1,4 +1,12 @@
 
+#include <ESP8266WiFi.h>
+#include <CTBot.h>
+#include <CTBotDataStructures.h>
+#include <CTBotInlineKeyboard.h>
+#include <CTBotReplyKeyboard.h>
+#include <Utilities.h>
+
+
 /*
    PENJELASAN PIN
 
@@ -6,17 +14,14 @@
    A0 = Sensor Flame
 */
 
-#include <ESP8266WiFi.h>
-#include <WiFiClientSecure.h>
-#include <TelegramBot.h>
 
 String pass;
 String ssid_;
 int ssid;
+String BotToken = "882232600:AAFZJ1qLdzNPxp40Csc5YtGDYB4LrICVWE4";
+const int id = 787077279;
 
-const char BotToken[] = "882232600:AAFZJ1qLdzNPxp40Csc5YtGDYB4LrICVWE4";
-WiFiClientSecure net;
-TelegramBot botTL(BotToken, net);
+CTBot botTL;
 
 void searchWifi() {
   bool finish = false;
@@ -102,32 +107,50 @@ void setup() {
 
   }
 
-  botTL.begin();
+  botTL.setTelegramToken(BotToken);
+  botTL.sendMessage(id, "Alat telah menyala!");
+  Serial.println("Pesan Terkirim");
   pinMode(D1, OUTPUT);
   Serial.println("Setup selesai");
 
 }
 
 void loop() {
+  TBMessage msg;
+  if (botTL.getNewMessage(msg)) {
+    if (msg.text.equalsIgnoreCase("BUZZER ON")) {
+      digitalWrite(D1, HIGH);
+      botTL.sendMessage(msg.sender.id, "Buzzer is now ON");
+    } else if (msg.text.equalsIgnoreCase("BUZZER OFF")) {
+      digitalWrite(D1, LOW);
+      botTL.sendMessage(msg.sender.id, "Buzzer is now OFF");
+    }
+    else {
+      String reply;
+      reply = (String)"Selamat datang " + msg.sender.username + (String)".";
+      botTL.sendMessage(msg.sender.id, reply);
+    }
 
-  message tes = botTL.getUpdates();
-
-  if (tes.text.equals("/buzzer_on")) {
-    digitalWrite(D1, HIGH);
-    botTL.sendMessage(tes.chat_id, "Buzzer On");
-  } else if (tes.text.equals("/buzzer_off")) {
-    digitalWrite(D1, LOW);
-    botTL.sendMessage(tes.chat_id, "Buzzer Off");
   }
 
-//  int sensorFlameAnalog = analogRead(A0);
-//
-//  if (sensorFlameAnalog < 70) {
-//    Serial.println("Danger, there's Fire around!");
-//    digitalWrite(D1, HIGH);
-//  } else {
-//    digitalWrite(D1, LOW);
-//  }
+  //  message tes = botTL.getUpdates();
+  //
+  //  if (tes.text.equals("/buzzer_on")) {
+  //    digitalWrite(D1, HIGH);
+  //    botTL.sendMessage(tes.chat_id, "Buzzer On");
+  //  } else if (tes.text.equals("/buzzer_off")) {
+  //    digitalWrite(D1, LOW);
+  //    botTL.sendMessage(tes.chat_id, "Buzzer Off");
+  //  }
+
+  //  int sensorFlameAnalog = analogRead(A0);
+  //
+  //  if (sensorFlameAnalog < 70) {
+  //    Serial.println("Danger, there's Fire around!");
+  //    digitalWrite(D1, HIGH);
+  //  } else {
+  //    digitalWrite(D1, LOW);
+  //  }
 
   delay(1000);
 }
