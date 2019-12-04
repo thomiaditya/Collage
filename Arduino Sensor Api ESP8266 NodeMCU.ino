@@ -186,6 +186,7 @@ void safeMode(int sensorMotion, TBMessage msg, CTBot botTL) {
     botTL.sendMessage(msg.sender.id, "Ada penyusup!!!");
     delay(5000);
   }
+  digitalWrite(D1, LOW);
 }
 bool safeModeOn = false;
 void loop() {
