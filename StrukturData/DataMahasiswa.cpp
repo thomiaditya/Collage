@@ -1,11 +1,6 @@
 #include <iostream>
 #include <string>
 
-std::string deleteOperation = "delete";
-std::string addOperation = "add";
-std::string updateOperation = "update";
-std::string readOperation = "show";
-
 void firstInit()
 {
     std::cout << "Name: Thomi Aditya Alhakiim" << std::endl << "NIM: 19051204057\n";
